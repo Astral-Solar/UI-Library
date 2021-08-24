@@ -18,3 +18,4 @@ end
 
 UILib.GenerateFonts("calibri", "Calibri")
 UILib.GenerateFonts("aurebesh", "Aurebesh Condensed")
+UILib.GenerateFonts("orbitron", "Orbitron")

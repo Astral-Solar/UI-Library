@@ -12,22 +12,10 @@ local math_round = math.Round
 local lerp = Lerp
 
 -- Color cache
-local background = color(18, 18, 18)
-local backgroundShaded = color(20, 20, 20)
 local white = color(255, 255, 255)
 local black = color(0, 0, 0)
-local outline = color(31, 31, 31)
-local bubble = color(120, 120, 120)
-local headerShader = color(0, 0, 0, 55)
-local headerDefault = color(2, 108, 254)
-
--- Material cache
-local gradientDown = Material("gui/gradient_down")
-local gradientUp = Material("gui/gradient_up")
-local gradientMain = Material("gui/gradient")
-local gradientCenter = Material("gui/center_gradient")
-
-local gradientSize = 20
+local transWhite = color(255, 255, 255, 55)
+local transBlack = color(0, 0, 0, 155)
 
 
 local sinCache = {}
@@ -60,29 +48,17 @@ function UILib.DrawScaleText(text, size, posx, posy, color, align1, align2, font
 	return draw.SimpleText(text or "Sample Text", "astral_font_scale_"..(font or "calibri").."_"..(size or 10), posx or 0, posy or 0, color or black, align1 or TEXT_ALIGN_CENTER, align2 or TEXT_ALIGN_CENTER)
 end
 
-function UILib.DrawLineBreakText(text, size, posx, posy, align1, align2, color, font)
-	text = string.Split(text or "", "\n")
-	size = size or 20
-
-	local space = size*#text
-	local startingPos = posy-(space/2)+(size/2)
-
-	for k, v in pairs(text) do
-		UILib.DrawText(v, size, posx, startingPos+((k-1)*size), color or white, align1, align2)
-	end
-end
-
-function UILib.DrawShadowedBox(posx, posy, w, h)
-	draw_box(0, posx, posy, w, h, background)
-	
-	surface_setdrawcolor(0, 0, 0, 255)
-	surface_setmaterial(gradientDown)
-	surface_drawtexturedrect(posx, posy, w, gradientSize)
-	surface_setmaterial(gradientUp)
-	surface_drawtexturedrect(posx, posy+h-gradientSize, w, gradientSize)
-	surface_setmaterial(gradientMain)
-	surface_drawtexturedrect(posx, posy, gradientSize, h)
-	surface_drawtexturedrectrotated(posx+w-(gradientSize/2), posy+h/2, gradientSize, h, 180)
+function UILib.DrawBox(posx, posy, w, h)
+		-- Back Plate
+		draw.RoundedBox(0, posx, posy, w, h, transBlack)
+		-- Top Bar
+		draw.RoundedBox(0, posx, posy, w, 5, white)
+		-- Bottom Bar
+		draw.RoundedBox(0, posx, posy + (h-5), w, 5, white)
+		-- Left Bar
+		draw.RoundedBox(0, posx, posy + 5, 5, h-10, white)
+		-- Right Bar
+		draw.RoundedBox(0, posx + (w-5), posy + 5, 5, h-10, white)
 end
 
 
