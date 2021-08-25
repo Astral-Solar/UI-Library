@@ -22,7 +22,7 @@ function UILib.Scoreboard()
 
 	local frame = UILib.Frame("background_space")
 	UILib.ScoreboardPanel = frame
-	frame:SetSize(scrw() * 0.8, scrh() * 0.8)
+	frame:SetSize(scrh() * 0.8, scrh() * 0.8)
 	frame:Center()
 	frame:DockPadding(10, 10, 10, 10)
 	frame.Paint = nil
@@ -53,56 +53,85 @@ function UILib.Scoreboard()
 		version:SetWide(footer:GetWide() * 0.5)
 	end
 
-	local leftColumn = UILib.VerticalScroll(shell)
-	leftColumn:Dock(LEFT)
-	leftColumn:SetWide((shell:GetWide() * 0.5) - 15)
+	local cats = {}
+	local registeredCats = {}
+	for k, v in _pairs(RPExtraTeams) do
+		local plys = team.GetPlayers(k)
+		if table.IsEmpty(plys) then continue end
 
-	local rightColumn = UILib.VerticalScroll(shell)
-	rightColumn:Dock(RIGHT)
-	rightColumn:SetWide((shell:GetWide() * 0.5) - 15)
-
-	for k, v in ipairs(player_getall()) do
-		local pnl = UILib.ShadowPanel(((k%2) == 0) and rightColumn or leftColumn)
-		pnl:Dock(TOP)
-		pnl:DockMargin(5, 5, 5, 5)
-		pnl:SetTall(50)
-
-		local avatar = vgui.Create("AvatarImage", pnl)
-		avatar:Dock(LEFT)
-		avatar:SetSize(pnl:GetTall(), pnl:GetTall())
-		avatar:SetPlayer(v, 184)
-
-		local name = UILib.TextPanel(pnl, v:Name(), 30, TEXT_ALIGN_LEFT, "orbitron")
-		name:Dock(FILL)
-		name:DockMargin(5, 0, 0, 0)
-		local job = UILib.TextPanel(pnl, team.GetName(v:Team()), 30, TEXT_ALIGN_RIGHT, "orbitron")
-		job:Dock(RIGHT)
-		job:DockMargin(0, 0, 5, 0)
-
-		local btn = vgui.Create("DButton", pnl)
-		btn:SetText("")
-		btn.Paint = nil
-		btn.DoClick = function()
-			local card = UILib.Frame()
-			card:SetSize(scrh() * 0.5, scrh() * 0.5)
-			card:Center()
-			card.Paint = nil
-
-			local shell = UILib.Panel(card)
-			shell:Dock(FILL)
-
-			local name = UILib.TextPanel(shell, v:Name(), 60, TEXT_ALIGN_CENTER, "orbitron")
-			local playtimeTotal = UILib.TextPanel(shell, "Playtime: 120d 13h 44m | 2h 13m", 30, TEXT_ALIGN_CENTER, "orbitron")
-
-			timer.Simple(2, function()
-				card:Remove()
-			end)
+		if not registeredCats[v.category] then
+			registeredCats[v.category] = table.insert(cats, {name = v.category, plys = {}})
 		end
 
-		function pnl:PerformLayout()
-			job:SetWide(pnl:GetWide()*0.3)
-			btn:SetSize(pnl:GetWide(), pnl:GetTall())
+		for _, p in ipairs(plys) do
+			table.insert(cats[registeredCats[v.category]].plys, p)
 		end
+	end
+
+	local column = UILib.VerticalScroll(shell)
+	column:Dock(FILL)
+	column.Paint = nil
+
+	for _, cat in ipairs(cats) do
+		local catShell =  UILib.Panel(column)
+		catShell:Dock(TOP)
+		catShell:SetTall(50)
+		catShell:DockPadding(5, 5, 5, 5)
+		catShell:DockMargin(0, 0, 0, 10)
+
+		local title = UILib.TextPanel(catShell, cat.name, 40, TEXT_ALIGN_CENTER, "orbitron")
+
+		for k, v in ipairs(cat.plys) do
+			local pnl = UILib.ShadowPanel(catShell)
+			pnl:Dock(TOP)
+			pnl:DockMargin(0, 5, 0, 5)
+			pnl:SetTall(50)
+	
+			local avatar = vgui.Create("AvatarImage", pnl)
+			avatar:Dock(LEFT)
+			avatar:SetSize(pnl:GetTall(), pnl:GetTall())
+			avatar:SetPlayer(v, 184)
+	
+			local name = UILib.TextPanel(pnl, v:Name(), 30, TEXT_ALIGN_LEFT, "orbitron")
+			name:Dock(FILL)
+			name:DockMargin(5, 0, 0, 0)
+			local job = UILib.TextPanel(pnl, team.GetName(v:Team()), 30, TEXT_ALIGN_RIGHT, "orbitron")
+			job:Dock(RIGHT)
+			job:DockMargin(0, 0, 5, 0)
+	
+			local btn = vgui.Create("DButton", pnl)
+			btn:SetText("")
+			btn.Paint = nil
+			btn.DoClick = function()
+				local card = UILib.Frame()
+				card:SetSize(scrh() * 0.5, scrh() * 0.5)
+				card:Center()
+				card.Paint = nil
+	
+				local shell = UILib.Panel(card)
+				shell:Dock(FILL)
+	
+				local name = UILib.TextPanel(shell, v:Name(), 60, TEXT_ALIGN_CENTER, "orbitron")
+				local playtimeTotal = UILib.TextPanel(shell, "Playtime: 120d 13h 44m | 2h 13m", 30, TEXT_ALIGN_CENTER, "orbitron")
+	
+				timer.Simple(2, function()
+					card:Remove()
+				end)
+			end
+	
+			function pnl:PerformLayout()
+				job:SetWide(pnl:GetWide()*0.3)
+				btn:SetSize(pnl:GetWide(), pnl:GetTall())
+			end
+		end
+	end
+
+	function column:PerformLayout()
+		for k, v in ipairs(self:GetChildren()[1]:GetChildren()) do
+			v:SizeToChildren(true, true)
+		end
+		--for k, v in pairs(self:GetChildren())
+		--catShell:SizeToChildren(true, true)
 	end
 end
 
