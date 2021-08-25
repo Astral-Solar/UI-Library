@@ -8,6 +8,7 @@ local timer_simple = timer.Simple
 local table_sorybymember = table.SortByMember
 local _pairs = pairs
 local scrw, scrh = ScrW, ScrH
+local player_getall = player.GetAll
 
 -- Color cache
 local white = color(255, 255, 255)
@@ -60,10 +61,8 @@ function UILib.Scoreboard()
 	rightColumn:Dock(RIGHT)
 	rightColumn:SetWide((shell:GetWide() * 0.5) - 15)
 
-	for i=1, 30 do
-		local v = Entity(1)
-
-		local pnl = UILib.ShadowPanel(((i%2) == 0) and rightColumn or leftColumn)
+	for k, v in ipairs(player_getall()) do
+		local pnl = UILib.ShadowPanel(((k%2) == 0) and rightColumn or leftColumn)
 		pnl:Dock(TOP)
 		pnl:DockMargin(5, 5, 5, 5)
 		pnl:SetTall(50)
