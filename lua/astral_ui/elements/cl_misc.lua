@@ -15,7 +15,7 @@ local lerp = Lerp
 local transWhite = color(255, 255, 255, 55)
 local transBlack = color(0, 0, 0, 155)
 
--- Basic panel
+-- Basic panels
 function UILib.Panel(parent)
 	local pnl = vgui.Create("DPanel", parent)
 	function pnl:Paint(w, h)
@@ -31,6 +31,15 @@ function UILib.Panel(parent)
 		draw.RoundedBox(0, w-5, 5, 5, h-10, transWhite)
 	end
 	pnl:DockPadding(10, 10, 10, 10)
+
+	return pnl
+end
+function UILib.ShadowPanel(parent)
+	local pnl = vgui.Create("DPanel", parent)
+	function pnl:Paint(w, h)
+		-- Back Plate
+		draw.RoundedBox(0, 0, 0, w, h, transBlack)
+	end
 
 	return pnl
 end
@@ -71,7 +80,7 @@ function UILib.ModelHoldingWeapon(parent, mdl, weaponModel)
 end
 
 -- Draw basic text
-function UILib.TextPanel(container, text, size, locAlign)
+function UILib.TextPanel(container, text, size, locAlign, font)
 	local panel = vgui.Create("DPanel", container)
 	panel:SetWide(container:GetWide())
 	panel:Dock(TOP)
@@ -79,14 +88,14 @@ function UILib.TextPanel(container, text, size, locAlign)
 	panel.text = text
 	panel.color = color_white
 	panel.Paint = function(self, w, h)
-		UILib.DrawText(self.text, size or 40, (locAlign == TEXT_ALIGN_LEFT and 5) or (locAlign == TEXT_ALIGN_RIGHT and w-5) or w/2, h/2, self.color, locAlign or TEXT_ALIGN_CENTER)
+		UILib.DrawText(self.text, size or 40, (locAlign == TEXT_ALIGN_LEFT and 5) or (locAlign == TEXT_ALIGN_RIGHT and w-5) or w/2, h/2, self.color, locAlign or TEXT_ALIGN_CENTER, nil, font)
 	end
 
 	return panel
 end
 
 -- Draw basic text
-function UILib.TextPanelTranslation(container, text, size, subSize, locAlign)
+function UILib.TextPanelTranslation(container, text, size, subSize, locAlign, font)
 	local panel = vgui.Create("DPanel", container)
 	panel:SetWide(container:GetWide())
 	panel:Dock(TOP)
@@ -95,7 +104,7 @@ function UILib.TextPanelTranslation(container, text, size, subSize, locAlign)
 	panel.color = color_white
 	panel.Paint = function(self, w, h)
 		UILib.DrawText(self.text, size or 40, (locAlign == TEXT_ALIGN_LEFT and 5) or (locAlign == TEXT_ALIGN_RIGHT and w-5) or w/2, h/2 + 5, self.color, locAlign or TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, "aurebesh")
-		UILib.DrawText(self.text, subSize or 20, (locAlign == TEXT_ALIGN_LEFT and 5) or (locAlign == TEXT_ALIGN_RIGHT and w-5) or w/2, h/2 - 5, self.color, locAlign or TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+		UILib.DrawText(self.text, subSize or 20, (locAlign == TEXT_ALIGN_LEFT and 5) or (locAlign == TEXT_ALIGN_RIGHT and w-5) or w/2, h/2 - 5, self.color, locAlign or TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, font)
 	end
 
 	return panel

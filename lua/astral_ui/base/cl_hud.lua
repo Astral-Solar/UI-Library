@@ -116,6 +116,11 @@ function UILib.OverHead()
 				if ply:IsMuted() then
 					UILib.DrawText("Muted", 35, pos.x, pos.y-10, red, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, "orbitron")
 				end
+				if ply:IsSpeaking() then
+					surface.SetDrawColor(255, 255, 255, 255)
+					surface.SetMaterial(AstralLib.Image.GetMat("background_whitebars"))
+					surface.DrawTexturedRect(pos.x - 25, pos.y + 80, 50, 50)
+				end
             end
         end
     end
